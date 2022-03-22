@@ -1,183 +1,120 @@
-import Web3 from ‘web3’;
-
 <!DOCTYPE html>
 <html >
   <head>
-    <title>BlueSurge Tokens</title>
-
+    <title>Register information at Blockchain</title>
+ 
     <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"></script>
     <script src="./node_modules/web3/dist/web3.min.js"></script>
-    <script src="./index.js"></script>
+    <script src="./index.js"></script>    
   </head>
+ 
+  <body class="container"> 
 
-  <body class="container">
-
-    <h1 class="page-header">BlueSurge Tokens</h1>
-
+    <h1 class="page-header">BlueSurge Token</h1>
+ 
     <div class="row">
       <div>
-        <h3 class="sub-header">Create stake</h3>
+        <h3 class="sub-header">Stake Tokens</h3>
         <form class="form-inline" role="form">
           <div class="form-group">
             <table>
               <tr>
-                <td><label for="_amount">Amount </label> </td>
+                <td><label for="stakeAmt">Amount: </label> </td>
                 <td>
-                  <input class="form-control" id="_amount">
-                </td>
+                  <input class="form-control" id="stakeAmt">
+                </td>                          
               </tr>
             </table>
           </div>
-          <button onclick="stake(account,  _amount)">Stake</button>
+          <a href="#" onclick="stake()" class="btn btn-primary">Stake</a>
         </form>
       </div>
-    </div>
+    </div>   
 
     <div class="row">
       <div>
-        <h3 class="sub-header">Transfer tokens</h3>
+        <h3 class="sub-header">Transfer Tokens</h3>
         <form class="form-inline" role="form">
           <div class="form-group">
             <table>
               <tr>
-                <td><label for="amount">Amount</label> </td>
+                <td><label for="transferAmt">Amount: </label> </td>
                 <td>
-                  <input class="form-control" id="amount">
-                </td>
+                  <input class="form-control" id="transferAmt">
+                </td>                          
               </tr>
             </table>
-            <table>
-                <tr>
-                  <td><label for="_reciever">Reciever</label> </td>
-                  <td>
-                    <input class="form-control" id="_reciever">
-                  </td>
-                </tr>
-              </table>
-              <button onclick="send(_reciever,  amount)">Send</button>
           </div>
-         
-        </form>
-      </div>
-    </div>
-
-    <div class="row">
-      <div>
-        <h3 class="sub-header">More:</h3>
-        <form class="form-inline" role="form">
-          <button onclick="getStakeOf();">View your stake</button>
           <div class="form-group">
             <table>
               <tr>
-                <td>:</td>
+                <td><label for="reciever">Reciever: </label> </td>
                 <td>
-                  <label id="lastInfo">
-                </td>
+                  <input class="form-control" id="reciever">
+                </td>                          
               </tr>
             </table>
           </div>
+          <a href="#" onclick="send()" class="btn btn-primary">Send</a>
+        </form>
+      </div>
+    </div> 
+
+    <div class="row">
+      <div>
+        <h3 class="sub-header">Buy Tokens</h3>
+        <form class="form-inline" role="form">
+          <div class="form-group">
+            <table>
+              <tr>
+                <td><label for="buyAmt">Amount: </label> </td>
+                <td>
+                  <input class="form-control" id="buyAmt">
+                </td>                          
+              </tr>
+            </table>
+          </div>
+          <a href="#" onclick="buy()" class="btn btn-primary">Buy</a>
+        </form>
+      </div>
+    </div> 
+
+    <head>
+      <h2>More: </h2>
+    </head>
+
+    <div class="row">
+      <div>
+        <h3></h3>
+        <form class="form-inline" role="form">
+          <a href="#" onclick="withdraw()" class="btn btn-primary">Withdraw your reward</a>
+          <p></p>
+          <a href="#" onclick="viewStakedBalance()" class="btn btn-primary">View balance of staked tokens</a>
+          <div class="form-group">
+            <table>
+              <tr>
+                <td><span id="status"></span></td>
+                <td>
+                  <label id="stakeAmt">
+                </td>                          
+              </tr>
+            </table>
+          </div>
+          <p></p>
+          <a href="#" onclick="viewTokenBalance()" class="btn btn-primary">View your token balance</a>
+          <div class="form-group">
+            <table>
+              <tr>
+                <td><span id="_balance"></span></td>
+                <td>
+                  <label id="_amnt">
+                </td>                          
+              </tr>
+            </table>
+          </div>                
         </form>
       </div>
     </div>
-
-    <div class="row">
-    <div>
-        <h3 class="sub-header">More:</h3>
-        <form class="form-inline" role="form">
-          <button onclick="getBalanceOf();">View balance</button>
-        <div class="form-group">
-            <table>
-            <tr>
-                <td>:</td>
-                <td>
-                <label id="lastInfo">
-                </td>
-            </tr>
-            </table>
-        </div>
-        </form>
-    </div>
-    </div>
-    
-    Status: <span id="status">Loading...</span>
-
-    <script type="text/javascript">
-      async function loadWeb3() {
-        if(ethereum) {
-          web3 = new Web3(ethereum);
-          ethereum.enable();
-        }
-      }
-
-      async function load() {
-        await loadWeb3();
-        updateStatus('Ready!');
-      }
-
-      function updateStatus(status) {
-        const statusEl = document.getElementById('status');
-        statusEl.innerHTML = status;
-        console.log(status);
-      }
-
-      load();
-
-      async function loadContract() {
-        return await new web3.eth.Contract(
-          [{"inputs":[{"internalType":"address payable","name":"_owner","type":"address"},{"internalType":"uint256","name":"_supply","type":"uint256"}],"stateMutability":"payable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Bought","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"_stakeholder","type":"address"}],"name":"addStakeholder","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_reciever","type":"address"},{"internalType":"uint256","name":"_value","type":"uint256"}],"name":"buyToken","outputs":[{"internalType":"bool","name":"success","type":"bool"}],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"address","name":"_stakeholder","type":"address"}],"name":"calculateReward","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"},{"internalType":"uint256","name":"_stake","type":"uint256"}],"name":"createStake","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"distributeRewards","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"isStakeholder","outputs":[{"internalType":"bool","name":"","type":"bool"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_newPrice","type":"uint256"}],"name":"modifyBuyTokenPrice","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_stake","type":"uint256"}],"name":"removeStake","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_stakeholder","type":"address"}],"name":"removeStakeholder","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_stakeholder","type":"address"}],"name":"rewardOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_stakeholder","type":"address"}],"name":"stakeOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalRewards","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalStakes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"withdrawReward","outputs":[],"stateMutability":"nonpayable","type":"function"}],
-          '0xDACC7e83Cd91c60BAc5dE03a5Be888B3D3B422D5');
-      }
-
-      async function load() {
-        await loadWeb3();
-        contract = await loadContract();
-        updateStatus('Ready!');
-      }
-
-      var account;
-  
-      web3.eth.getAccounts(function(err, accounts) {
-        if (err != null) {
-          alert("Error retrieving accounts.");
-          return;
-        }
-        if (accounts.length == 0) {
-          alert("No account found! Make sure the Ethereum client is configured properly.");
-          return;
-        }
-        account = accounts[0];
-        console.log('Account: ' + account);
-        web3.eth.defaultAccount = account;
-      });
-
-      async function getBalanceOf() {
-        updateStatus('fetching balance...');
-        const _balance = await contract.methods.balanceOf(account).call();
-        updateStatus("Balance: " + _balance + " BST");
-      }
-
-      async function stake(_amount) {
-        updateStatus('processing request...');
-        
-        const balance = await contract.methods.createStake(account, _amount).send( {from: account});
-        updateStatus('Stake successful!');
-      }
-
-      async function send(_reciever, amount) {
-        updateStatus('processing request...');
-        const balance = await contract.methods.transferFrom(account, _reciever, _amount).send( {from: account});
-        updateStatus('Transfer successful!');
-      }
-
-      async function getStakeOf() {
-        updateStatus('fetching...');
-        const _balance = await contract.methods.stakeOf(account).call();
-        updateStatus("Staked tokens: " + _balance + " BST");
-      }
-
-    </script> 
   </body>
-
-
 </html>
