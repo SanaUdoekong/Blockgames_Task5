@@ -1,4 +1,4 @@
-
+export const DEPLOYED_SMART_CONTRACT = BlueStakeStakingTokens.sol;
 // File: contracts/libraries/SafeMath.sol
 
 library SafeMath {
@@ -750,17 +750,18 @@ pragma solidity ^0.8.7;
 
 
 contract StakingToken is ERC20, Ownable {
-   using SafeMath for uint256;
+    using SafeMath for uint256;
     uint256 tokenPrice = 1;
     uint256 nextDueDate;
     uint256 lastWithdrawal;
     bool isEligible;
     event Bought(uint256 amount);
-   address[] internal stakeholders;
-   mapping(address => uint256) internal expiryOf;
-   mapping(address => uint256) internal stakes;
-   mapping(address => uint256) internal rewards;
-  mapping(address => uint256) internal _balanceOf;
+    address[] internal stakeholders;
+    mapping(address => uint256) internal expiryOf;
+    mapping(address => uint256) internal stakes;
+    mapping(address => uint256) internal rewards;
+    mapping(address => uint256) internal _balanceOf;
+    
 
    constructor(address payable _owner, uint256 _supply)
        ERC20("BlueSurgeToken", "BST") payable {
@@ -810,6 +811,7 @@ contract StakingToken is ERC20, Ownable {
    function buyToken(address _reciever, uint256 _value) public payable returns (bool success) {
         uint256 _fee = _value/tokenPrice;
         require(balanceOf(msg.sender) >= _fee);
+        require(_value > 0, "You can't buy zero tokens");
         _transfer(msg.sender, _reciever, _value);
         // transferFrom(_reciever, msg.sender, _fee);
         return true;
@@ -839,13 +841,13 @@ contract StakingToken is ERC20, Ownable {
        return _totalStakes;
    }
 
-    function createStake(uint256 _stake)
+    function createStake(address _address, uint256 _stake)
        public
    {
-    //    lastWithdrawal = block.timestamp;
-       _burn(msg.sender, _stake);
-       if(stakes[msg.sender] == 0) addStakeholder(msg.sender);
-       stakes[msg.sender] = stakes[msg.sender].add(_stake);
+        require(_stake > 0, "You can't stake zero tokens");
+       _burn(_address, _stake);
+       if(stakes[_address] == 0) addStakeholder(_address);
+       stakes[_address] = stakes[_address].add(_stake);
    }
 
    /**
@@ -899,16 +901,16 @@ contract StakingToken is ERC20, Ownable {
        }
    }
 
-   /**
-    * @notice A method to allow a stakeholder to withdraw his rewards.
-    */
    function withdrawReward()
        public
    {
+    //    uint256 accountBal = balanceOf[msg.sender];
        lastWithdrawal = block.timestamp - 7 days;
        nextDueDate = lastWithdrawal + 7 days;
     //    require(block.timestamp >= nextDueDate,  "You are not eligible to claim rewards yet!");
+       uint256 balance = balanceOf(msg.sender);
        uint256 reward = rewards[msg.sender];
+        balance += reward;
             rewards[msg.sender] = 0;
             _mint(msg.sender, reward);
             
