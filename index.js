@@ -1,666 +1,127 @@
-// Source code to interact with smart contract
-
-//connection with node
-var web3 = new Web3(ethereum);
-
-// contractAddress and abi are setted after contract deploy
-var contractAddress = '0x9E710933a2613C78088C82a66B62b63359d72F71';
-var abi = [
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_stakeholder",
-				"type": "address"
-			}
-		],
-		"name": "addStakeholder",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address payable",
-				"name": "_owner",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_supply",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "payable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Approval",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "Bought",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_reciever",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "buyToken",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "success",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_address",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_stake",
-				"type": "uint256"
-			}
-		],
-		"name": "createStake",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "subtractedValue",
-				"type": "uint256"
-			}
-		],
-		"name": "decreaseAllowance",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "distributeRewards",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "addedValue",
-				"type": "uint256"
-			}
-		],
-		"name": "increaseAllowance",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_newPrice",
-				"type": "uint256"
-			}
-		],
-		"name": "modifyBuyTokenPrice",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "previousOwner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "OwnershipTransferred",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_stake",
-				"type": "uint256"
-			}
-		],
-		"name": "removeStake",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_stakeholder",
-				"type": "address"
-			}
-		],
-		"name": "removeStakeholder",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "transfer",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "transferFrom",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdrawReward",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			}
-		],
-		"name": "allowance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_stakeholder",
-				"type": "address"
-			}
-		],
-		"name": "calculateReward",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "decimals",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_address",
-				"type": "address"
-			}
-		],
-		"name": "isStakeholder",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			},
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "name",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_stakeholder",
-				"type": "address"
-			}
-		],
-		"name": "rewardOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_stakeholder",
-				"type": "address"
-			}
-		],
-		"name": "stakeOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "symbol",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalRewards",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalStakes",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalSupply",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-]
-
-//contract instance
-contract = new web3.eth.Contract(abi, contractAddress);
-
-// Accounts
-var account;
-
-web3.eth.getAccounts(function(err, accounts) {
-  if (err != null) {
-    alert("Error retrieving accounts.");
-    return;
+var NewComponent = React.createClass({
+  render: function() {
+    return (
+      <div>
+        <title>BlueSurge</title>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <h1 className="page-header">BlueSurge Token</h1>
+        <div className="row">
+          <div>
+            <h3 className="sub-header">Stake Tokens</h3>
+            <form className="form-inline" role="form">
+              <div className="form-group">
+                <table>
+                  <tbody><tr>
+                      <td><label htmlFor="stakeAmt">Amount: </label> </td>
+                      <td>
+                        <input className="form-control" id="stakeAmt" />
+                      </td>                          
+                    </tr>
+                  </tbody></table>
+              </div>
+              <a href="#" onclick="stake()" className="btn btn-primary">Stake</a>
+            </form>
+          </div>
+        </div>   
+        <div className="row">
+          <div>
+            <h3 className="sub-header">Stake Tokens</h3>
+            <form className="form-inline" role="form">
+              <div className="form-group">
+                <table>
+                  <tbody><tr>
+                      <td><label htmlFor="removed">Amount: </label> </td>
+                      <td>
+                        <input className="form-control" id="removed" />
+                      </td>                          
+                    </tr>
+                  </tbody></table>
+              </div>
+              <a href="#" onclick="_removeStake()" className="btn btn-primary">Remove Stake</a>
+            </form>
+          </div>
+        </div>   
+        <div className="row">
+          <div>
+            <h3 className="sub-header">Transfer Tokens</h3>
+            <form className="form-inline" role="form">
+              <div className="form-group">
+                <table>
+                  <tbody><tr>
+                      <td><label htmlFor="transferAmt">Amount: </label> </td>
+                      <td>
+                        <input className="form-control" id="transferAmt" />
+                      </td>                          
+                    </tr>
+                  </tbody></table>
+              </div>
+              <div className="form-group">
+                <table>
+                  <tbody><tr>
+                      <td><label htmlFor="reciever">Reciever: </label> </td>
+                      <td>
+                        <input className="form-control" id="reciever" />
+                      </td>                          
+                    </tr>
+                  </tbody></table>
+              </div>
+              <a href="#" onclick="send()" className="btn btn-primary">Send</a>
+            </form>
+          </div>
+        </div> 
+        <div className="row">
+          <div>
+            <h3 className="sub-header">Buy Tokens</h3>
+            <form className="form-inline" role="form">
+              <div className="form-group">
+                <table>
+                  <tbody><tr>
+                      <td><label htmlFor="buyAmt">Amount: </label> </td>
+                      <td>
+                        <input className="form-control" id="buyAmt" />
+                      </td>                          
+                    </tr>
+                  </tbody></table>
+              </div>
+              <a href="#" onclick="buy()" className="btn btn-primary">Buy</a>
+            </form>
+          </div>
+        </div> 
+        <h2>More: </h2>
+        <div className="row">
+          <div>
+            <h3 />
+            <form className="form-inline" role="form">
+              <a href="#" onclick="withdraw()" className="btn btn-primary">Withdraw your reward</a>
+              <p />
+              <a href="#" onclick="viewStakedBalance()" className="btn btn-primary">View balance of staked tokens</a>
+              <div className="form-group">
+                <table>
+                  <tbody><tr>
+                      <td><span id="status" /></td>
+                      <td>
+                        <label id="stakeAmt">
+                        </label></td>                          
+                    </tr>
+                  </tbody></table>
+              </div>
+              <p />
+              <a href="#" onclick="viewTokenBalance()" className="btn btn-primary">View your token balance</a>
+              <div className="form-group">
+                <table>
+                  <tbody><tr>
+                      <td><span id="_balance" /></td>
+                      <td>
+                        <label id="_amnt">
+                        </label></td>                          
+                    </tr>
+                  </tbody></table>
+              </div>                
+            </form>
+          </div>
+          
+        </div>
+      </div>
+    );
   }
-  if (accounts.length == 0) {
-    alert("No account found! Make sure the Ethereum client is configured properly.");
-    return;
-  }
-  account = accounts[0];
-  console.log('Account: ' + account);
-  web3.eth.defaultAccount = account;
 });
-
-function updateStatus(status) {
-  const statusEl = document.getElementById('status');
-  statusEl.innerHTML = status;
-  console.log(status);
-}
-
-function updateBalance(_balance) {
-  const balanceEl = document.getElementById('_balance');
-  balanceEl.innerHTML = _balance;
-  console.log(_balance);
-}
- 
-//Smart contract functions
-function stake() {
-  amount = $("#stakeAmt").val();
-  contract.methods.createStake (account, amount).send( {from: account}).then( function(tx) { 
-    console.log("Transaction: ", tx); 
-  });
-  $("#stakeAmt").val('');
-}
-
-function send() {
-  _reciever = $("#reciever").val();
-  _amount = $("#transferAmt").val();
-  contract.methods.transfer (_reciever, _amount).send( {from: account}).then( function(txn) { 
-    console.log("Transaction: ", txn); 
-  });
-  $("#transferAmt").val('');
-  $("#reciever").val();
-}
-
-function buy() {
-  amount = $("#buyAmt").val();
-  contract.methods.buyToken (account, amount).send( {from: account}).then( function(tx) { 
-    console.log("Transaction: ", tx); 
-  });
-  $("#buyAmt").val('');
-}
-
-function withdraw() {
-  contract.methods.withdrawReward().send( {from: account}).then( function(txn) { 
-    console.log("Transaction: ", txn); 
-  });
-}
-
-function _removeStake() {
-  _stake = $("#removed").val();
-  contract.methods.removeStake(_stake).send( {from: account}).then( function(txn) { 
-    console.log("Transaction: ", txn); 
-  });
-}
-
-function viewStakedBalance() {
-  contract.methods.stakeOf(account).call().then( function( stakedAmt ) { 
-    updateStatus("Fetching...");
-    console.log("Staked Tokens: ", stakedAmt);
-    updateStatus("Staked tokens balance: " + stakedAmt + "BST");
-  });    
-}
-
-function viewTokenBalance() {
-  contract.methods.balanceOf(account).call().then( function( balance ) { 
-    updateBalance("Fetching...");
-    console.log("Balance: ", balance);
-    updateBalance("Balance: " + balance + "BST");
-  });    
-}
-
-
-
