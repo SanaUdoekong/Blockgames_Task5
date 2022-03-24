@@ -143,7 +143,7 @@
     // Source code to interact with smart contract
 
 //connection with node
-var web3 = new Web3(ethereum);
+export default { var web3 = new Web3(ethereum);
 
 // contractAddress and abi are setted after contract deploy
 var contractAddress = '0x9E710933a2613C78088C82a66B62b63359d72F71';
@@ -802,7 +802,7 @@ function viewTokenBalance() {
     console.log("Balance: ", balance);
     updateBalance("Balance: " + balance + "BST");
   });    
-}
+}}
 
 
 
